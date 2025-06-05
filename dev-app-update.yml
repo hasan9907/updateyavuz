@@ -3,6 +3,7 @@ repo: updateyavuz
 provider: github
 updaterCacheDirName: yavuz-muhasebe-updater
 allowPrerelease: false
+allowDowngrade: true
 forceDevUpdateConfig: true
 requestHeaders:
   Cache-Control: "no-cache" 

@@ -259,6 +259,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
+    show: false, // Önce gizli oluştur
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -267,6 +268,12 @@ function createWindow() {
   });
 
   mainWindow.loadFile('pages/index.html');
+  
+  // Sayfa yüklendikten sonra tam ekran göster
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.maximize(); // Tam ekran yap
+    mainWindow.show(); // Pencereyi göster
+  });
   
   // Geliştirme araçlarını aç
   if (process.env.NODE_ENV === 'development') {
