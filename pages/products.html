@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ürünler - Finans Yönetim Sistemi</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-2 sidebar">
+        <h4 class="text-center mb-4">Finans Yönetim</h4>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">
+              <i class="bi bi-house"></i> Ana Sayfa
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard.html">
+              <i class="bi bi-speedometer2"></i> Gösterge Paneli
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="customers.html">
+              <i class="bi bi-people"></i> Müşteriler
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="products.html">
+              <i class="bi bi-box"></i> Ürünler
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="sales.html">
+              <i class="bi bi-cart"></i> Satışlar
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="expenses.html">
+              <i class="bi bi-cash"></i> Giderler
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="reports.html">
+              <i class="bi bi-bar-chart"></i> Raporlar
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="settings.html">
+              <i class="bi bi-gear"></i> Ayarlar
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="col-md-10 main-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2>Ürünler</h2>
+          <button class="btn btn-primary" id="add-product-btn">
+            <i class="bi bi-plus"></i> Yeni Ürün
+          </button>
+        </div>
+        
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-hover" id="products-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Ürün Adı</th>
+                    <th>Açıklama</th>
+                    <th>Fiyat Bilgisi</th>
+                    <th>Stok</th>
+                    <th>İşlemler</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Ürün verileri JavaScript ile eklenecek -->
+                  <tr>
+                    <td colspan="6" class="text-center">Yükleniyor...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Ürün Ekleme Modal -->
+        <div class="modal fade" id="productModal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Yeni Ürün Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <form id="product-form">
+                  <input type="hidden" id="product-id">
+                  <div class="mb-3">
+                    <label for="product-name" class="form-label">Ürün Adı</label>
+                    <input type="text" class="form-control" id="product-name" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="product-description" class="form-label">Açıklama</label>
+                    <textarea class="form-control" id="product-description" rows="2"></textarea>
+                  </div>
+                  <div class="mb-3">
+                    <label for="product-price" class="form-label">Satış Fiyatı</label>
+                    <input type="number" class="form-control" id="product-price" step="0.01" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="product-vat-rate" class="form-label">KDV (%)</label>
+                    <input type="number" class="form-control" id="product-vat-rate" step="0.01" min="0" max="100" value="18" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="product-purchase-price" class="form-label">Alış Fiyatı</label>
+                    <input type="number" class="form-control" id="product-purchase-price" step="0.01" value="0" min="0">
+                  </div>
+                  <div class="mb-3">
+                    <label for="product-stock" class="form-label">Stok Miktarı</label>
+                    <input type="number" class="form-control" id="product-stock" value="0" min="0">
+                  </div>
+                  <div class="mb-3">
+                    <label for="product-barcode" class="form-label">Barkod</label>
+                    <input type="text" class="form-control" id="product-barcode">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="save-product">Kaydet</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stok Güncelleme Modal -->
+        <div class="modal fade" id="stockModal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Stok Güncelle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <form id="stock-form">
+                  <input type="hidden" id="stock-product-id">
+                  <div class="mb-3">
+                    <label for="stock-product-name" class="form-label">Ürün</label>
+                    <input type="text" class="form-control" id="stock-product-name" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="stock-current" class="form-label">Mevcut Stok</label>
+                    <input type="number" class="form-control" id="stock-current" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="stock-add" class="form-label">Eklenecek Miktar</label>
+                    <input type="number" class="form-control" id="stock-add" value="0" min="0">
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-primary" id="update-stock">Güncelle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Ürün Görüntüleme Modal -->
+        <div class="modal fade" id="viewProductModal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title">Ürün Detayları</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <div class="row mb-2">
+                  <div class="col-4 fw-bold">ID:</div>
+                  <div class="col-8" id="view-product-id"></div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 fw-bold">Ürün Adı:</div>
+                  <div class="col-8" id="view-product-name"></div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 fw-bold">Açıklama:</div>
+                  <div class="col-8" id="view-product-description"></div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 fw-bold">Fiyat:</div>
+                  <div class="col-8" id="view-product-price"></div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 fw-bold">Alış Fiyatı:</div>
+                  <div class="col-8" id="view-product-purchase-price"></div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 fw-bold">Stok:</div>
+                  <div class="col-8" id="view-product-stock"></div>
+                </div>
+                <div class="row mb-2">
+                  <div class="col-4 fw-bold">Barkod:</div>
+                  <div class="col-8" id="view-product-barcode"></div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary" onclick="editProductFromView()">Düzenle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Silme Onay Modal -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Ürün Silme Onayı</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              </div>
+              <div class="modal-body">
+                <p>
+                  <strong><span id="delete-product-name"></span></strong> isimli ürünü silmek istediğinizden emin misiniz?
+                </p>
+                <p class="text-danger">
+                  <i class="bi bi-exclamation-triangle-fill"></i> Bu işlem geri alınamaz.
+                </p>
+                <input type="hidden" id="delete-product-id">
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn">
+                  <i class="bi bi-trash"></i> Ürünü Sil
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script src="../assets/js/core.js"></script>
+  <script src="../assets/js/products.js"></script>
+</body>
+</html> 

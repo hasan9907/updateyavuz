@@ -1,0 +1,46 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  font-size: 12pt;
+  width: 210mm;
+  height: 297mm;
+  position: relative;
+}
+
+.field {
+  position: absolute;
+}
+
+/* Yazdırma için ek stiller */
+@media print {
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  
+  #invoice {
+    width: 210mm;
+    height: 297mm;
+  }
+  
+  /* Yazdırma sırasında UI elemanlarını gizle */
+  #printButton, button {
+    display: none !important;
+  }
+}
+
+/* Bildirim animasyonu */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification-toast {
+  animation: slideIn 0.3s ease-out;
+} 

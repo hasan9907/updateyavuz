@@ -1,8 +1,8 @@
-version: 1.0.6
+version: 1.0.0
 files:
-  - url: Yavuz-Muhasebe-Setup-1.0.6.exe
-    sha512: 4vY8cW9du7ULMlLpuwzt930keMOc/ybj4E8rX6i6VW+JzGd5BzoWAXj0tpbB/8ICo7UHp9yFyRd4j3oYyva8yQ==
-    size: 91333236
-path: Yavuz-Muhasebe-Setup-1.0.6.exe
-sha512: 4vY8cW9du7ULMlLpuwzt930keMOc/ybj4E8rX6i6VW+JzGd5BzoWAXj0tpbB/8ICo7UHp9yFyRd4j3oYyva8yQ==
-releaseDate: '2025-06-05T17:22:39.003Z'
+  - url: Yavuz-Muhasebe-Setup-1.0.0.exe
+    sha512: YJ9p+HHnii432iAVS9Of9IaYi+MZbPYsFPiblGCN4J7o0/brQ2ga3dP0nPfi6dFaDYSsqtdIL3K+YtayoKv0mQ==
+    size: 91332519
+path: Yavuz-Muhasebe-Setup-1.0.0.exe
+sha512: YJ9p+HHnii432iAVS9Of9IaYi+MZbPYsFPiblGCN4J7o0/brQ2ga3dP0nPfi6dFaDYSsqtdIL3K+YtayoKv0mQ==
+releaseDate: '2025-06-05T18:01:28.569Z'

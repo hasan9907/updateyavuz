@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fatura</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="invoice">
+    <div class="field" style="top: 50px; left: 430px;" id="invoiceNumber">000123</div>
+    <div class="field" style="top: 80px; left: 430px;" id="invoiceDate">16/05/2025</div>
+    <div class="field" style="top: 120px; left: 60px;" id="customerName">Ahmet Yılmaz</div>
+    
+    <div id="products"></div>
+
+    <div class="field" style="top: 600px; left: 430px;" id="totalAmount">₺1.500</div>
+  </div>
+
+  <!-- Test için yazdırma butonu, gerçek yazdırma sistemi içinde gizlenecek -->
+  <button id="printButton" style="position: fixed; top: 10px; right: 10px; z-index: 9999;">Yazdır</button>
+
+  <script src="renderer.js"></script>
+  <script>
+    // Test butonu için - gerçek uygulamada silinecek
+    document.getElementById('printButton').addEventListener('click', function() {
+      printBasicInvoice();
+    });
+  </script>
+</body>
+</html> 

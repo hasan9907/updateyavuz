@@ -1,9 +1,9 @@
 {
   "name": "yavuz-muhasebe-app",
-  "version": "1.0.6",
+  "version": "1.0.0",
   "description": "Yavuz Muhasebe ve Satış Sistemi",
   "main": "main.js",
-  "homepage": "https://github.com/hasan9907/update",
+  "homepage": "https://github.com/hasan9907/updateyavuz",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
@@ -103,7 +103,7 @@
       {
         "provider": "github",
         "owner": "hasan9907",
-        "repo": "update",
+        "repo": "updateyavuz",
         "releaseType": "release",
         "publishAutoUpdate": true
       }

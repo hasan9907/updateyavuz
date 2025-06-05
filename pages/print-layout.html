@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Dikey Çift Fatura Taslak Editörü (Dinamik Alan Seçimli)</title>
+  <meta name="viewport" content="width=800">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <style>
+    body { background: #f8f9fa; }
+    .a4-preview {
+      width: 210mm;
+      height: 297mm;
+      border: 1px solid #888;
+      background: #fff;
+      position: relative;
+      margin: 0 auto;
+      box-shadow: 0 0 10px #aaa;
+      overflow: hidden;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center center;
+      transition: background-image 0.3s, background-size 0.2s, background-position 0.2s;
+    }
+    .a4-preview::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      opacity: var(--bg-opacity, 0.3);
+      background: inherit;
+      background-image: inherit;
+      background-size: inherit;
+      background-repeat: inherit;
+      background-position: inherit;
+    }
+    .draggable-label {
+      position: absolute;
+      background: rgba(255,255,255,0.8);
+      padding: 2px 8px;
+      border-radius: 4px;
+      border: 1px dashed #aaa;
+      cursor: move;
+      user-select: none;
+      font-family: monospace;
+      min-width: 60px;
+      min-height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+    }
+    .label-controls { margin-bottom: 1rem; }
+    .template-list { max-height: 200px; overflow-y: auto; }
+    .half-divider { position: absolute; left: 0; width: 100%; top: 50%; height: 0; border-top: 2px dashed #bbb; z-index: 1; }
+    .field-checkbox { margin-right: 8px; }
+    .field-list { margin-bottom: 1rem; }
+    @media print {
+      html, body, .a4-preview, #a4-preview, .a4-root {
+        overflow: hidden !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        max-width: 210mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        border: none !important;
+        scrollbar-width: none !important; /* Firefox */
+      }
+      /* Tüm scrollbar ve track'leri gizle */
+      ::-webkit-scrollbar,
+      ::-webkit-scrollbar-thumb,
+      ::-webkit-scrollbar-track,
+      ::-webkit-scrollbar-track-piece,
+      ::-webkit-scrollbar-corner,
+      ::-webkit-resizer {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
+        border: none !important;
+      }
+      /* Edge/IE için */
+      body, .a4-preview, #a4-preview, .a4-root {
+        -ms-overflow-style: none !important;
+      }
+      body > *:not(.a4-preview):not(#a4-preview) {
+        display: none !important;
+      }
+      .a4-preview, #a4-preview {
+        display: block !important;
+        position: static !important;
+        margin: 0 auto !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+        height: 297mm !important;
+        overflow: hidden !important;
+        background: #fff !important;
+        box-shadow: none !important;
+        border: none !important;
+        z-index: 9999 !important;
+      }
+      html, body {
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: #fff !important;
+      }
+      /* Tüm kaydırma çubuklarını gizle */
+      ::-webkit-scrollbar, ::-webkit-scrollbar-thumb {
+        display: none !important;
+        width: 0 !important;
+        background: transparent !important;
+      }
+      .half-divider {
+        display: none !important;
+        border: none !important;
+      }
+      .a4-preview,
+      #a4-preview,
+      .invoice-container,
+      .half-divider,
+      .draggable-label,
+      .container,
+      .row,
+      .col-md-4,
+      .col-md-8,
+      .card,
+      .card-body,
+      .card-title {
+        overflow: hidden !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: transparent !important;
+      }
+      .half-divider,
+      ::-webkit-scrollbar,
+      ::-webkit-scrollbar-thumb {
+        display: none !important;
+        border: none !important;
+        background: transparent !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+  <h2 class="mb-4">Dikey Çift Fatura Taslak Editörü</h2>
+        <div class="mb-3">
+    <label>Üst Kopya Başlangıç (mm): <input type="number" id="top-offset" value="0" min="0" max="50" style="width:60px;"></label>
+    <label class="ms-3">Alt Kopya Başlangıç (mm): <input type="number" id="bottom-offset" value="30" min="0" max="100" style="width:60px;"></label>
+    <label class="ms-3">Satır Aralığı (pt): <input type="number" id="line-height" value="16" min="8" max="48" style="width:60px;"></label>
+    <label class="ms-3">A4 Arka Planı: <input type="file" id="bg-image-input" accept="image/*" style="width:180px;"></label>
+    <button class="btn btn-sm btn-outline-danger ms-2" id="remove-bg-btn" style="display:none;">Arka Planı Kaldır</button>
+  </div>
+  <div class="mb-3" id="bg-settings-panel" style="display:none;">
+    <strong>Arka Plan Ayarları:</strong>
+    <label class="ms-2">Boyut:
+      <select id="bg-size" class="form-select d-inline-block" style="width:110px;">
+        <option value="contain">Sığdır (contain)</option>
+        <option value="cover">Kapla (cover)</option>
+        <option value="auto">Orijinal</option>
+      </select>
+    </label>
+    <label class="ms-2">Yatay:
+      <select id="bg-pos-x" class="form-select d-inline-block" style="width:90px;">
+        <option value="left">Sol</option>
+        <option value="center">Orta</option>
+        <option value="right">Sağ</option>
+      </select>
+    </label>
+    <label class="ms-2">Dikey:
+      <select id="bg-pos-y" class="form-select d-inline-block" style="width:90px;">
+        <option value="top">Üst</option>
+        <option value="center">Orta</option>
+        <option value="bottom">Alt</option>
+      </select>
+    </label>
+    <label class="ms-2">Şeffaflık:
+      <input type="range" id="bg-opacity" min="0" max="100" value="30" style="width:90px; vertical-align:middle;">
+      <span id="bg-opacity-value">30%</span>
+    </label>
+          </div>
+  <div class="row">
+    <div class="col-md-4">
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Alan Seçimi (Üst Kopya)</h5>
+          <div class="field-list" id="field-list"></div>
+          <div id="field-controls"></div>
+        </div>
+          </div>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Alan Seçimi (Alt Kopya / SURET)</h5>
+          <div class="field-list" id="suret-field-list"></div>
+          <div id="suret-field-controls"></div>
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-body">
+          <h5 class="card-title">Taslak Yönetimi</h5>
+          <div class="input-group mb-2">
+            <input type="text" id="template-name" class="form-control" placeholder="Taslak adı">
+            <button class="btn btn-outline-primary" id="save-template">Kaydet</button>
+          </div>
+          <div class="template-list mb-2" id="template-list"></div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-outline-success flex-fill" id="load-template">Yükle</button>
+            <button class="btn btn-outline-danger flex-fill" id="delete-template">Sil</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary w-100" id="print-btn">Yazdır</button>
+      </div>
+      <div class="col-md-8">
+      <div class="a4-preview position-relative" id="a4-preview">
+        <div class="half-divider"></div>
+        <!-- Dinamik label'lar JS ile eklenecek -->
+      </div>
+    </div>
+  </div>
+</div>
+  <script>
+function mmToPx(mm) { return mm * 3.7795275591; }
+function pxToMm(px) { return px / 3.7795275591; }
+
+let topOffset = 0;
+let bottomOffset = 30;
+let lineHeight = 16;
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('top-offset').oninput = function() {
+    topOffset = parseFloat(this.value) || 0;
+    renderLabels();
+  };
+  document.getElementById('bottom-offset').oninput = function() {
+    bottomOffset = parseFloat(this.value) || 0;
+    renderLabels();
+  };
+  document.getElementById('line-height').oninput = function() {
+    lineHeight = parseInt(this.value) || 16;
+    renderLabels();
+  };
+  // BG image yüklemesi
+  const savedBg = localStorage.getItem('a4BgImage');
+  if (savedBg) setA4BgImage(savedBg);
+  document.getElementById('bg-image-input').onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      setA4BgImage(ev.target.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  document.getElementById('remove-bg-btn').onclick = function() {
+    setA4BgImage(null);
+    document.getElementById('bg-image-input').value = '';
+  };
+  // BG ayarlarını yükle
+  document.getElementById('bg-size').value = localStorage.getItem('a4BgSize') || 'contain';
+  document.getElementById('bg-pos-x').value = localStorage.getItem('a4BgPosX') || 'center';
+  document.getElementById('bg-pos-y').value = localStorage.getItem('a4BgPosY') || 'center';
+  document.getElementById('bg-opacity').value = Math.round((parseFloat(localStorage.getItem('a4BgOpacity')) || 0.3) * 100);
+  document.getElementById('bg-opacity-value').textContent = document.getElementById('bg-opacity').value + '%';
+  applyBgSettings();
+  // Ayar eventleri
+  document.getElementById('bg-size').onchange = function() {
+    localStorage.setItem('a4BgSize', this.value);
+    applyBgSettings();
+  };
+  document.getElementById('bg-pos-x').onchange = function() {
+    localStorage.setItem('a4BgPosX', this.value);
+    applyBgSettings();
+  };
+  document.getElementById('bg-pos-y').onchange = function() {
+    localStorage.setItem('a4BgPosY', this.value);
+    applyBgSettings();
+  };
+  document.getElementById('bg-opacity').oninput = function() {
+    const val = (parseInt(this.value) / 100).toFixed(2);
+    localStorage.setItem('a4BgOpacity', val);
+    document.getElementById('bg-opacity-value').textContent = this.value + '%';
+    applyBgSettings();
+  };
+});
+
+const allFields = [
+  { key: 'barcode', label: 'Barkod', default: 'Barkod: 1234567890123' },
+  { key: 'desc', label: 'Açıklama', default: 'Açıklama: [ÜRÜN]' },
+  { key: 'price', label: 'Birim Fiyat', default: 'Birim Fiyat: 1500 TL' },
+  { key: 'quantity', label: 'Adet', default: 'Adet: 2' },
+  { key: 'item_total', label: 'Birim Toplam', default: 'Birim Toplam: 3000 TL' },
+  { key: 'vat', label: 'KDV', default: 'KDV: [KDV_ORANI]%' },
+  { key: 'discount', label: 'İndirim', default: 'İndirim: 0 TL' },
+  { key: 'total', label: 'Toplam', default: 'Toplam: 1500 TL' },
+  { key: 'genel_toplam', label: 'Genel Toplam', default: 'Genel Toplam: 4500 TL' },
+  { key: 'date', label: 'Tarih', default: 'Tarih: 01.01.2024' }
+];
+
+let selectedFields = allFields.map(f => f.key); // Üst kopya için
+let fieldSettings = {};
+allFields.forEach(f => {
+  fieldSettings[f.key] = {
+    text: f.default,
+    x: 20,
+    y: 20 + 10 * allFields.indexOf(f),
+    size: 16
+  };
+});
+// SURET için ayrı state
+let suretSelectedFields = allFields.map(f => f.key);
+let suretFieldSettings = {};
+allFields.forEach(f => {
+  suretFieldSettings[f.key] = {
+    text: f.default,
+    x: 20,
+    y: 20 + 10 * allFields.indexOf(f),
+    size: 16
+  };
+});
+
+function renderFieldCheckboxes() {
+  // Üst kopya
+  const list = document.getElementById('field-list');
+  list.innerHTML = allFields.map(f => `
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input field-checkbox" value="${f.key}" id="cb-${f.key}" ${selectedFields.includes(f.key) ? 'checked' : ''}>
+      ${f.label}
+    </label><br>
+  `).join('');
+  allFields.forEach(f => {
+    document.getElementById('cb-' + f.key).onchange = function() {
+      if (this.checked) {
+        if (!selectedFields.includes(f.key)) selectedFields.push(f.key);
+      } else {
+        selectedFields = selectedFields.filter(k => k !== f.key);
+      }
+      renderFieldControls();
+      renderLabels();
+    };
+  });
+  // SURET
+  const suretList = document.getElementById('suret-field-list');
+  suretList.innerHTML = allFields.map(f => `
+    <label class="form-check-label">
+      <input type="checkbox" class="form-check-input suret-field-checkbox" value="${f.key}" id="suret-cb-${f.key}" ${suretSelectedFields.includes(f.key) ? 'checked' : ''}>
+      ${f.label}
+    </label><br>
+  `).join('');
+  allFields.forEach(f => {
+    document.getElementById('suret-cb-' + f.key).onchange = function() {
+      if (this.checked) {
+        if (!suretSelectedFields.includes(f.key)) suretSelectedFields.push(f.key);
+      } else {
+        suretSelectedFields = suretSelectedFields.filter(k => k !== f.key);
+      }
+      renderSuretFieldControls();
+      renderLabels();
+    };
+  });
+}
+
+function renderFieldControls() {
+  const controls = document.getElementById('field-controls');
+  controls.innerHTML = '';
+  selectedFields.forEach(key => {
+    const f = allFields.find(ff => ff.key === key);
+    const s = fieldSettings[key];
+    controls.innerHTML += `
+      <div class="mb-3 label-controls">
+        <div class="form-label">${f.label}</div>
+        <input type="text" id="text-${key}" class="form-control mb-1" value="${s.text}">
+        <div class="d-flex gap-2 mb-1">
+          <input type="number" id="x-${key}" class="form-control" min="0" max="210" value="${s.x}" placeholder="X (mm)">
+          <input type="number" id="y-${key}" class="form-control" min="0" max="297" value="${s.y}" placeholder="Y (mm)">
+          <input type="number" id="size-${key}" class="form-control" min="8" max="48" value="${s.size}" placeholder="Boyut (pt)">
+        </div>
+      </div>
+    `;
+  });
+  selectedFields.forEach(key => {
+    ['text', 'x', 'y', 'size'].forEach(suffix => {
+      document.getElementById((suffix === 'text' ? 'text-' : suffix + '-') + key).oninput = () => updateLabel(key);
+    });
+  });
+}
+function renderSuretFieldControls() {
+  const controls = document.getElementById('suret-field-controls');
+  controls.innerHTML = '';
+  suretSelectedFields.forEach(key => {
+    const f = allFields.find(ff => ff.key === key);
+    const s = suretFieldSettings[key];
+    controls.innerHTML += `
+      <div class="mb-3 label-controls">
+        <div class="form-label">${f.label}</div>
+        <input type="text" id="suret-text-${key}" class="form-control mb-1" value="${s.text}">
+        <div class="d-flex gap-2 mb-1">
+          <input type="number" id="suret-x-${key}" class="form-control" min="0" max="210" value="${s.x}" placeholder="X (mm)">
+          <input type="number" id="suret-y-${key}" class="form-control" min="0" max="297" value="${s.y}" placeholder="Y (mm)">
+          <input type="number" id="suret-size-${key}" class="form-control" min="8" max="48" value="${s.size}" placeholder="Boyut (pt)">
+        </div>
+      </div>
+    `;
+  });
+  suretSelectedFields.forEach(key => {
+    ['text', 'x', 'y', 'size'].forEach(suffix => {
+      document.getElementById((suffix === 'text' ? 'suret-text-' : 'suret-' + suffix + '-') + key).oninput = () => updateSuretLabel(key);
+    });
+  });
+}
+
+function renderLabels() {
+  const preview = document.getElementById('a4-preview');
+  // Önce tüm eski label'ları sil
+  preview.querySelectorAll('.draggable-label').forEach(l => l.remove());
+  // Eski suret-container'ı sil
+  const oldSuret = document.getElementById('suret-container');
+  if (oldSuret) oldSuret.remove();
+  // Satır aralığı ve maksimum satır hesabı
+  const rowGap = 8; // Her ürün satırı arası (mm)
+  const maxRows = Math.floor(148.5 / rowGap); // A4 yarısına sığacak maksimum satır
+  // SURET için container oluştur
+  const suretContainer = document.createElement('div');
+  suretContainer.id = 'suret-container';
+  suretContainer.style.position = 'absolute';
+  suretContainer.style.left = '0';
+  suretContainer.style.width = '100%';
+  suretContainer.style.top = mmToPx(148.5 + bottomOffset) + 'px'; // Alt kopya offset
+  preview.appendChild(suretContainer);
+  // Üst kopya
+  selectedFields.forEach(key => {
+    const s = fieldSettings[key];
+    const label = document.createElement('div');
+    label.className = 'draggable-label';
+    label.id = 'label-' + key;
+    let text = s.text;
+    label.textContent = text;
+    label.style.left = mmToPx(s.x) + 'px';
+    label.style.top = mmToPx(s.y + topOffset) + 'px';
+    label.style.fontSize = s.size + 'pt';
+    label.style.lineHeight = lineHeight + 'pt';
+    // Sürükle-bırak
+    let isDragging = false, offsetX = 0, offsetY = 0;
+    label.addEventListener('mousedown', e => {
+      isDragging = true;
+      offsetX = e.offsetX;
+      offsetY = e.offsetY;
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', function moveHandler(e) {
+      if (!isDragging) return;
+      const rect = preview.getBoundingClientRect();
+      let x = e.clientX - rect.left - offsetX;
+      let y = e.clientY - rect.top - offsetY;
+      x = Math.max(0, Math.min(x, rect.width - label.offsetWidth));
+      y = Math.max(0, Math.min(y, rect.height/2 - label.offsetHeight));
+      label.style.left = x + 'px';
+      label.style.top = (y + mmToPx(topOffset)) + 'px';
+      fieldSettings[key].x = Math.round(pxToMm(x));
+      fieldSettings[key].y = Math.round(pxToMm(y));
+      renderLabels();
+    });
+    document.addEventListener('mouseup', () => { isDragging = false; document.body.style.userSelect = ''; });
+    preview.appendChild(label);
+    // Alt yarı (SURET) - buradan kaldırıldı
+  });
+  // SURET (alt kopya)
+  suretSelectedFields.forEach(key => {
+    const s = suretFieldSettings[key];
+    const labelCopy = document.createElement('div');
+    labelCopy.className = 'draggable-label';
+    labelCopy.id = 'label-suret-' + key;
+    let text = s.text;
+    labelCopy.textContent = text;
+    labelCopy.style.left = mmToPx(s.x) + 'px';
+    labelCopy.style.top = mmToPx(s.y) + 'px';
+    labelCopy.style.fontSize = s.size + 'pt';
+    labelCopy.style.lineHeight = lineHeight + 'pt';
+    // Sürükle-bırak (sadece alt yarı için, alt yarının üst sınırı 148.5mm)
+    let isDragging = false, offsetX = 0, offsetY = 0;
+    labelCopy.addEventListener('mousedown', e => {
+      isDragging = true;
+      offsetX = e.offsetX;
+      offsetY = e.offsetY;
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', function moveHandler(e) {
+      if (!isDragging) return;
+      const rect = preview.getBoundingClientRect();
+      let x = e.clientX - rect.left - offsetX;
+      let y = e.clientY - rect.top - offsetY;
+      // Alt yarı sınırı: 148.5mm'den başlar, 297mm'ye kadar
+      x = Math.max(0, Math.min(x, rect.width - labelCopy.offsetWidth));
+      y = Math.max(rect.height/2, Math.min(y + mmToPx(bottomOffset), rect.height - labelCopy.offsetHeight));
+      labelCopy.style.left = x + 'px';
+      labelCopy.style.top = y + 'px';
+      suretFieldSettings[key].x = Math.round(pxToMm(x));
+      suretFieldSettings[key].y = Math.round(pxToMm(y - rect.height/2));
+      renderLabels();
+    });
+    document.addEventListener('mouseup', () => { isDragging = false; document.body.style.userSelect = ''; });
+    suretContainer.appendChild(labelCopy);
+  });
+}
+
+function updateLabel(key) {
+  const s = fieldSettings[key];
+  s.text = document.getElementById('text-' + key).value;
+  s.x = parseFloat(document.getElementById('x-' + key).value) || 0;
+  s.y = parseFloat(document.getElementById('y-' + key).value) || 0;
+  s.size = parseInt(document.getElementById('size-' + key).value) || 16;
+  renderLabels();
+}
+function updateSuretLabel(key) {
+  const s = suretFieldSettings[key];
+  s.text = document.getElementById('suret-text-' + key).value;
+  s.x = parseFloat(document.getElementById('suret-x-' + key).value) || 0;
+  s.y = parseFloat(document.getElementById('suret-y-' + key).value) || 0;
+  s.size = parseInt(document.getElementById('suret-size-' + key).value) || 16;
+  renderLabels();
+}
+// Taslak kaydet/yükle/sil (localStorage)
+function getTemplates() {
+  return JSON.parse(localStorage.getItem('printTemplatesV3') || '[]');
+}
+function saveTemplates(templates) {
+  localStorage.setItem('printTemplatesV3', JSON.stringify(templates));
+}
+function refreshTemplateList() {
+  const list = document.getElementById('template-list');
+  const templates = getTemplates();
+  list.innerHTML = templates.map(t => `<div class="form-check"><input class="form-check-input" type="radio" name="template-radio" value="${t.name}" id="template-${t.name}"><label class="form-check-label" for="template-${t.name}">${t.name}</label></div>`).join('');
+}
+document.getElementById('save-template').onclick = () => {
+  const name = document.getElementById('template-name').value.trim();
+  if (!name) return alert('Taslak adı girin!');
+  let templates = getTemplates();
+  const idx = templates.findIndex(t => t.name === name);
+  const tpl = {
+    name,
+    selectedFields: [...selectedFields],
+    fieldSettings: JSON.parse(JSON.stringify(fieldSettings)),
+    suretSelectedFields: [...suretSelectedFields],
+    suretFieldSettings: JSON.parse(JSON.stringify(suretFieldSettings)),
+    topOffset,
+    bottomOffset,
+    lineHeight
+  };
+  if (idx >= 0) templates[idx] = tpl;
+  else templates.push(tpl);
+  saveTemplates(templates);
+  refreshTemplateList();
+  alert('Taslak kaydedildi!');
+};
+document.getElementById('load-template').onclick = () => {
+  const selected = document.querySelector('input[name="template-radio"]:checked');
+  if (!selected) return alert('Bir taslak seçin!');
+  const name = selected.value;
+  const templates = getTemplates();
+  const tpl = templates.find(t => t.name === name);
+  if (!tpl) return;
+  selectedFields = [...tpl.selectedFields];
+  fieldSettings = JSON.parse(JSON.stringify(tpl.fieldSettings));
+  suretSelectedFields = tpl.suretSelectedFields ? [...tpl.suretSelectedFields] : [...tpl.selectedFields];
+  suretFieldSettings = tpl.suretFieldSettings ? JSON.parse(JSON.stringify(tpl.suretFieldSettings)) : JSON.parse(JSON.stringify(tpl.fieldSettings));
+  if (typeof tpl.topOffset !== 'undefined') {
+    topOffset = tpl.topOffset;
+    document.getElementById('top-offset').value = topOffset;
+  }
+  if (typeof tpl.bottomOffset !== 'undefined') {
+    bottomOffset = tpl.bottomOffset;
+    document.getElementById('bottom-offset').value = bottomOffset;
+  }
+  if (typeof tpl.lineHeight !== 'undefined') {
+    lineHeight = tpl.lineHeight;
+    document.getElementById('line-height').value = lineHeight;
+  }
+  renderFieldCheckboxes();
+  renderFieldControls();
+  renderSuretFieldControls();
+  renderLabels();
+};
+document.getElementById('delete-template').onclick = () => {
+  const selected = document.querySelector('input[name="template-radio"]:checked');
+  if (!selected) return alert('Bir taslak seçin!');
+  const name = selected.value;
+  let templates = getTemplates();
+  templates = templates.filter(t => t.name !== name);
+  saveTemplates(templates);
+  refreshTemplateList();
+};
+refreshTemplateList();
+
+    document.getElementById('print-btn').onclick = function() {
+      window.print();
+    };
+
+// BG IMAGE LOGIC
+function setA4BgImage(base64) {
+  const preview = document.getElementById('a4-preview');
+  if (base64) {
+    preview.style.backgroundImage = `url('${base64}')`;
+    localStorage.setItem('a4BgImage', base64);
+    document.getElementById('remove-bg-btn').style.display = '';
+    document.getElementById('bg-settings-panel').style.display = '';
+  } else {
+    preview.style.backgroundImage = '';
+    localStorage.removeItem('a4BgImage');
+    document.getElementById('remove-bg-btn').style.display = 'none';
+    document.getElementById('bg-settings-panel').style.display = 'none';
+  }
+  applyBgSettings();
+}
+function applyBgSettings() {
+  const preview = document.getElementById('a4-preview');
+  const size = localStorage.getItem('a4BgSize') || 'contain';
+  const posX = localStorage.getItem('a4BgPosX') || 'center';
+  const posY = localStorage.getItem('a4BgPosY') || 'center';
+  const opacity = localStorage.getItem('a4BgOpacity') || '0.3';
+  preview.style.backgroundSize = size;
+  preview.style.backgroundPosition = posX + ' ' + posY;
+  preview.style.setProperty('--bg-opacity', opacity);
+}
+
+// İlk render
+renderFieldCheckboxes();
+renderFieldControls();
+renderSuretFieldControls();
+renderLabels();
+
+window.addEventListener('beforeprint', function() {
+  document.body.style.overflow = 'hidden';
+  document.documentElement.style.overflow = 'hidden';
+  var preview = document.getElementById('a4-preview');
+  if (preview) preview.style.overflow = 'hidden';
+});
+  </script>
+</body>
+</html> 

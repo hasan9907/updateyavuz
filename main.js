@@ -14,7 +14,7 @@ log.info('App starting...');
 autoUpdater.setFeedURL({
   provider: 'github',
   owner: 'hasan9907',
-  repo: 'update'
+  repo: 'updateyavuz'
 });
 
 // Development modda güncelleme kontrolü için
