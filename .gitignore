@@ -1,0 +1,16 @@
+# Sadece build dosyalarını yükle, kaynak kodları gizle
+node_modules/
+dist*/
+build/
+*.log
+.env
+.DS_Store
+Thumbs.db
+*.db-wal
+*.db-shm
+financeapp.db
+
+# Sadece bu dosyalar yüklensin:
+!package.json
+!README.md
+!dist/** 
