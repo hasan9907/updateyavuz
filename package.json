@@ -1,22 +1,35 @@
 {
-  "name": "yavuz",
-  "version": "1.0.0",
-  "description": "",
+  "name": "yavuz-muhasebe-app",
+  "version": "1.0.6",
+  "description": "Yavuz Muhasebe ve Satış Sistemi",
   "main": "main.js",
+  "homepage": "https://github.com/hasan9907/update",
   "scripts": {
     "start": "electron .",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win",
+    "build-mac": "electron-builder --mac",
+    "build-linux": "electron-builder --linux",
+    "publish": "electron-builder --publish=always",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "muhasebe",
+    "satış",
+    "fatura",
+    "stok"
+  ],
+  "author": "Yavuz Yazılım",
   "license": "ISC",
   "dependencies": {
     "chart.js": "^4.4.3",
-    "electron": "^30.0.9",
+    "electron-log": "^5.4.0",
+    "electron-updater": "^6.6.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.23.1",
-    "sqlite3": "^5.1.7"
+    "sqlite3": "^5.1.7",
+    "yavuz-muhasebe-app": "file:"
   },
   "devDependencies": {
     "@babel/core": "^7.24.6",
@@ -24,9 +37,76 @@
     "@babel/preset-react": "^7.24.6",
     "babel-loader": "^9.1.3",
     "css-loader": "^7.1.2",
+    "electron": "^30.0.9",
+    "electron-builder": "^24.13.3",
     "html-webpack-plugin": "^5.6.0",
     "style-loader": "^4.0.0",
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4"
+  },
+  "build": {
+    "appId": "com.yavuz.muhasebe",
+    "productName": "Yavuz Muhasebe",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "invoice.js",
+      "renderer.js",
+      "pages/**/*",
+      "assets/**/*",
+      "financeapp.db",
+      "node_modules/electron-updater/**/*",
+      "node_modules/electron-log/**/*",
+      "node_modules/chart.js/**/*",
+      "node_modules/sqlite3/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "financeapp.db",
+        "to": "financeapp.db"
+      }
+    ],
+    "nodeGypRebuild": false,
+    "npmRebuild": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "perMachine": false,
+      "allowElevation": true
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns"
+    },
+    "linux": {
+      "target": "AppImage",
+      "icon": "assets/icon.png"
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "hasan9907",
+        "repo": "update",
+        "releaseType": "release",
+        "publishAutoUpdate": true
+      }
+    ]
   }
 }

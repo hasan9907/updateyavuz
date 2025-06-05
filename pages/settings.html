@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ayarlar - Yavuz Muhasebe</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="../pages/index.html">
+                <i class="fas fa-calculator me-2"></i>
+                Yavuz Muhasebe
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../pages/index.html">
+                            <i class="fas fa-home me-1"></i>Ana Sayfa
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../pages/sales.html">
+                            <i class="fas fa-shopping-cart me-1"></i>Satışlar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../pages/customers.html">
+                            <i class="fas fa-users me-1"></i>Müşteriler
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../pages/products.html">
+                            <i class="fas fa-box me-1"></i>Ürünler
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../pages/expenses.html">
+                            <i class="fas fa-receipt me-1"></i>Giderler
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../pages/reports.html">
+                            <i class="fas fa-chart-line me-1"></i>Raporlar
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="../pages/settings.html">
+                            <i class="fas fa-cog me-1"></i>Ayarlar
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2><i class="fas fa-cog me-2"></i>Ayarlar</h2>
+                </div>
+
+                <!-- Settings Tabs -->
+                <ul class="nav nav-tabs" id="settingsTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="general-tab" data-bs-toggle="tab" data-bs-target="#general" type="button" role="tab">
+                            <i class="fas fa-cog me-2"></i>Genel
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="updates-tab" data-bs-toggle="tab" data-bs-target="#updates" type="button" role="tab">
+                            <i class="fas fa-download me-2"></i>Güncellemeler
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="backup-tab" data-bs-toggle="tab" data-bs-target="#backup" type="button" role="tab">
+                            <i class="fas fa-database me-2"></i>Yedekleme
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="settingsTabContent">
+                    <!-- Genel Ayarlar -->
+                    <div class="tab-pane fade show active" id="general" role="tabpanel">
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Genel Ayarlar</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="companyName" class="form-label">Firma Adı</label>
+                                            <input type="text" class="form-control" id="companyName" placeholder="Firma adınızı girin">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="companyAddress" class="form-label">Firma Adresi</label>
+                                            <textarea class="form-control" id="companyAddress" rows="3" placeholder="Firma adresinizi girin"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="taxOffice" class="form-label">Vergi Dairesi</label>
+                                            <input type="text" class="form-control" id="taxOffice" placeholder="Vergi dairenizi girin">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="taxNumber" class="form-label">Vergi Numarası</label>
+                                            <input type="text" class="form-control" id="taxNumber" placeholder="Vergi numaranızı girin">
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary" onclick="saveGeneralSettings()">
+                                    <i class="fas fa-save me-2"></i>Kaydet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Güncelleme Ayarları -->
+                    <div class="tab-pane fade" id="updates" role="tabpanel">
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Uygulama Güncellemeleri</h5>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <i class="fas fa-info-circle text-primary me-2"></i>
+                                            <span>Mevcut Sürüm: <strong id="currentVersion">Yükleniyor...</strong></span>
+                                        </div>
+                                        
+                                        <div id="updateStatus" class="alert alert-info d-none">
+                                            <i class="fas fa-spinner fa-spin me-2"></i>
+                                            <span id="updateStatusText">Güncellemeler kontrol ediliyor...</span>
+                                        </div>
+
+                                        <div id="updateAvailable" class="alert alert-success d-none">
+                                            <i class="fas fa-download me-2"></i>
+                                            <span>Yeni güncelleme mevcut! İndirmek için butona tıklayın.</span>
+                                        </div>
+
+                                        <div id="updateNotAvailable" class="alert alert-info d-none">
+                                            <i class="fas fa-check-circle me-2"></i>
+                                            <span>Uygulamanız güncel!</span>
+                                        </div>
+
+                                        <div id="downloadProgress" class="d-none">
+                                            <div class="mb-2">
+                                                <small class="text-muted">İndiriliyor...</small>
+                                            </div>
+                                            <div class="progress mb-3">
+                                                <div id="downloadProgressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                                                     role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <div class="text-center">
+                                                <small id="downloadProgressText" class="text-muted">0% tamamlandı</small>
+                                            </div>
+                                        </div>
+
+                                        <div id="updateDownloaded" class="alert alert-warning d-none">
+                                            <i class="fas fa-exclamation-triangle me-2"></i>
+                                            <span>Güncelleme indirildi! Yüklemek için uygulamayı yeniden başlatmanız gerekiyor.</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-primary" id="checkUpdatesBtn" onclick="checkForUpdates()">
+                                        <i class="fas fa-search me-2"></i>Güncellemeleri Kontrol Et
+                                    </button>
+                                    <button type="button" class="btn btn-success d-none" id="downloadBtn" onclick="downloadUpdate()">
+                                        <i class="fas fa-download me-2"></i>Güncellemeyi İndir
+                                    </button>
+                                    <button type="button" class="btn btn-warning d-none" id="installBtn" onclick="installUpdate()">
+                                        <i class="fas fa-sync-alt me-2"></i>Yeniden Başlat ve Yükle
+                                    </button>
+                                </div>
+
+                                                  <hr class="my-4">
+                  
+                  <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Manuel Güncelleme:</strong> Güncellemeler otomatik olarak kontrol edilmez. 
+                    Yukarıdaki butona tıklayarak istediğiniz zaman güncelleme kontrolü yapabilirsiniz.
+                  </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Yedekleme Ayarları -->
+                    <div class="tab-pane fade" id="backup" role="tabpanel">
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <h5 class="card-title">Veritabanı Yedekleme</h5>
+                                <p class="text-muted">Verilerinizin güvenliği için düzenli yedekleme yapmanız önerilir.</p>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <button type="button" class="btn btn-success me-2 mb-2" onclick="createBackup()">
+                                            <i class="fas fa-download me-2"></i>Yedeği Oluştur
+                                        </button>
+                                        <button type="button" class="btn btn-warning mb-2" onclick="restoreBackup()">
+                                            <i class="fas fa-upload me-2"></i>Yedeği Geri Yükle
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div id="backupStatus" class="mt-3"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Sayfa yüklendiğinde mevcut sürümü al
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                const version = await window.api.getAppVersion();
+                document.getElementById('currentVersion').textContent = 'v' + version;
+            } catch (error) {
+                console.error('Sürüm bilgisi alınamadı:', error);
+                document.getElementById('currentVersion').textContent = 'Bilinmiyor';
+            }
+
+            // Event listener'ları kaydet
+            if (window.electronAPI) {
+                console.log('Settings sayfasında event listener\'lar kayıt ediliyor...');
+                
+                window.electronAPI.onUpdateAvailable((info) => {
+                    console.log('Update available event received:', info);
+                    showUpdateAvailable();
+                });
+                
+                window.electronAPI.onDownloadProgress((progress) => {
+                    console.log('Download progress event received:', progress);
+                    const progressBar = document.getElementById('downloadProgressBar');
+                    const progressText = document.getElementById('downloadProgressText');
+                    const downloadProgressDiv = document.getElementById('downloadProgress');
+                    const statusDiv = document.getElementById('updateStatus');
+                    
+                    // Progress göster
+                    downloadProgressDiv.classList.remove('d-none');
+                    statusDiv.classList.add('d-none');
+                    
+                    if (progressBar) {
+                        progressBar.style.width = progress.percent.toFixed(1) + '%';
+                        progressBar.setAttribute('aria-valuenow', progress.percent.toFixed(1));
+                    }
+                    
+                    if (progressText) {
+                        const transferred = formatBytes(progress.transferred);
+                        const total = formatBytes(progress.total);
+                        progressText.textContent = `${progress.percent.toFixed(1)}% tamamlandı (${transferred} / ${total})`;
+                    }
+                });
+                
+                window.electronAPI.onUpdateDownloaded((info) => {
+                    console.log('Update downloaded event received:', info);
+                    const downloadProgressDiv = document.getElementById('downloadProgress');
+                    downloadProgressDiv.classList.add('d-none');
+                    showUpdateDownloaded();
+                });
+                
+                window.electronAPI.onUpdateError((error) => {
+                    console.log('Update error event received:', error);
+                    const downloadProgressDiv = document.getElementById('downloadProgress');
+                    downloadProgressDiv.classList.add('d-none');
+                    showError('Güncelleme hatası: ' + error);
+                });
+            } else {
+                console.log('electronAPI mevcut değil!');
+            }
+        });
+
+        // Güncellemeleri kontrol et
+        async function checkForUpdates() {
+            const btn = document.getElementById('checkUpdatesBtn');
+            const status = document.getElementById('updateStatus');
+            const statusText = document.getElementById('updateStatusText');
+            
+            // UI güncellemeleri
+            btn.disabled = true;
+            status.classList.remove('d-none');
+            statusText.textContent = 'Güncellemeler kontrol ediliyor...';
+            hideAllAlerts();
+
+            try {
+                const result = await window.api.checkForUpdates();
+                
+                if (result.success && result.hasUpdate) {
+                    showUpdateAvailable();
+                } else {
+                    showUpdateNotAvailable();
+                }
+            } catch (error) {
+                console.error('Güncelleme kontrolü hatası:', error);
+                showError('Güncelleme kontrolü sırasında hata oluştu: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                status.classList.add('d-none');
+            }
+        }
+
+        // Güncellemeyi indir
+        async function downloadUpdate() {
+            const btn = document.getElementById('downloadBtn');
+            btn.disabled = true;
+            
+            try {
+                const result = await window.api.downloadUpdate();
+                if (!result.success) {
+                    showError('Güncelleme indirme hatası: ' + result.error);
+                }
+            } catch (error) {
+                console.error('İndirme hatası:', error);
+                showError('İndirme sırasında hata oluştu: ' + error.message);
+                btn.disabled = false;
+            }
+        }
+
+        // Güncellemeyi yükle
+        async function installUpdate() {
+            if (confirm('Uygulama kapatılacak ve güncelleme yüklenecek. Devam etmek istiyor musunuz?')) {
+                try {
+                    await window.api.quitAndInstall();
+                } catch (error) {
+                    console.error('Yükleme hatası:', error);
+                    showError('Yükleme sırasında hata oluştu: ' + error.message);
+                }
+            }
+        }
+
+        // UI yardımcı fonksiyonları
+        function hideAllAlerts() {
+            document.getElementById('updateAvailable').classList.add('d-none');
+            document.getElementById('updateNotAvailable').classList.add('d-none');
+            document.getElementById('updateDownloaded').classList.add('d-none');
+        }
+
+        function showUpdateAvailable() {
+            hideAllAlerts();
+            document.getElementById('updateAvailable').classList.remove('d-none');
+            document.getElementById('downloadBtn').classList.remove('d-none');
+        }
+
+        function showUpdateNotAvailable() {
+            hideAllAlerts();
+            document.getElementById('updateNotAvailable').classList.remove('d-none');
+        }
+
+        function showUpdateDownloaded() {
+            hideAllAlerts();
+            document.getElementById('updateDownloaded').classList.remove('d-none');
+            document.getElementById('downloadBtn').classList.add('d-none');
+            document.getElementById('installBtn').classList.remove('d-none');
+        }
+
+        function showError(message) {
+            hideAllAlerts();
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger';
+            alertDiv.innerHTML = `<i class="fas fa-exclamation-triangle me-2"></i>${message}`;
+            document.querySelector('#updates .card-body').appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Genel ayarları kaydet
+        function saveGeneralSettings() {
+            // Burada localStorage veya API ile ayarları kaydedebilirsiniz
+            alert('Ayarlar kaydedildi!');
+        }
+
+        // Yedekleme fonksiyonları (placeholder)
+        function createBackup() {
+            alert('Yedekleme özelliği yakında eklenecek!');
+        }
+
+        function restoreBackup() {
+            alert('Geri yükleme özelliği yakında eklenecek!');
+        }
+    </script>
+</body>
+</html>

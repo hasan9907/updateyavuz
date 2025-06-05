@@ -1,0 +1,8 @@
+owner: hasan9907
+repo: update
+provider: github
+updaterCacheDirName: yavuz-muhasebe-updater
+allowPrerelease: false
+forceDevUpdateConfig: true
+requestHeaders:
+  Cache-Control: "no-cache" 
